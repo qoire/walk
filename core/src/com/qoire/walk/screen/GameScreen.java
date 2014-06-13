@@ -3,7 +3,7 @@ package com.qoire.walk.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.qoire.walk.World;
+import com.qoire.walk.model.World;
 import com.qoire.walk.view.WorldRenderer;
 
 public class GameScreen implements Screen {
@@ -21,6 +21,7 @@ public class GameScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         // TODO Auto-generated method stub
+        renderer.setSize(width, height);
     }
 
     @Override

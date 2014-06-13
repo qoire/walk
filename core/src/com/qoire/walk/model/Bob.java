@@ -36,6 +36,10 @@ public class Bob {
         this.facingLeft = facingLeft;
     }
 
+    public float getSIZE() {
+        return SIZE;
+    }
+
     public Vector2 getPosition() {
         return position;
     }

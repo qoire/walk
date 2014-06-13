@@ -25,4 +25,8 @@ public class Block {
     public Rectangle getBounds() {
         return bounds;
     }
+
+    public float getSIZE() {
+        return SIZE;
+    }
 }
