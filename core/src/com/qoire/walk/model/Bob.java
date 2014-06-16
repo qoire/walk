@@ -16,6 +16,8 @@ public class Bob {
     public static final float SIZEX = 24;
     public static final float SIZEY = 28;
 
+    float stateTime;
+
     Vector2 position = new Vector2();
     Vector2 acceleration = new Vector2();
     Vector2 velocity = new Vector2();
@@ -28,6 +30,7 @@ public class Bob {
         this.bounds.height = SIZEY;
         this.bounds.width = SIZEX;
     }
+
 
     public boolean isFacingLeft() {
         return facingLeft;
@@ -69,7 +72,12 @@ public class Bob {
         this.state = newState;
     }
 
+    public float getStateTime() {
+        return stateTime;
+    }
+
     public void update(float delta) {
+        stateTime += delta;
         position.add(velocity.cpy().scl(delta));
     }
 }

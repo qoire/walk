@@ -4,7 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.qoire.walk.model.World;
@@ -18,6 +21,7 @@ public class WorldRenderer {
 
     private static final float CAMERA_WIDTH = 16f;
     private static final float CAMERA_HEIGHT = 9f;
+    private static final float RUNNING_FRAME_DURATION = 0.06f;
 
     private World world;
     private OrthographicCamera cam;
@@ -25,8 +29,6 @@ public class WorldRenderer {
     ShapeRenderer debugRenderer = new ShapeRenderer();
 
     /** private textures **/
-    private Texture bobTex;
-    private Texture blockTex;
 
     private SpriteBatch spriteBatch;
     private boolean debug = false;
@@ -34,6 +36,16 @@ public class WorldRenderer {
     private int height;
     private float ppuX;
     private float ppuY;
+
+    /** Texture regions **/
+    private TextureRegion bobIdleLeft;
+    private TextureRegion bobIdleRight;
+    private TextureRegion blockTexture;
+    private TextureRegion bobFrame;
+
+    /** private animations **/
+    private Animation walkLeftAnimation;
+    private Animation walkRightAnimation;
 
     public void setSize(int w, int h) {
         this.width = w;
@@ -71,18 +83,46 @@ public class WorldRenderer {
     }
 
     private void loadTextures() {
-        bobTex = new Texture(Gdx.files.internal("images/bob_01.png"));
-        blockTex = new Texture(Gdx.files.internal("images/block.png"));
+        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("images/textures/texture.pack"));
+        bobIdleLeft = atlas.findRegion("bob-01");
+        bobIdleRight = atlas.findRegion("bob-01");
+        bobIdleRight.flip(true, false);
+
+        //block texture
+        blockTexture = atlas.findRegion("block");
+
+        //add in running frames left
+        TextureRegion[] walkLeftFrames = new TextureRegion[5];
+        for (int i = 0; i < 5; i++) {
+            walkLeftFrames[i] = atlas.findRegion("bob-0" + (i + 2));
+        }
+
+        walkRightAnimation = new Animation(RUNNING_FRAME_DURATION, walkLeftFrames);
+        TextureRegion[] walkRightFrames = new TextureRegion[5];
+        for (int i = 0; i < 5; i++) {
+            walkRightFrames[i] = new TextureRegion(walkLeftFrames[i]);
+            walkRightFrames[i].flip(true, false);
+        }
+        walkRightAnimation = new Animation(RUNNING_FRAME_DURATION, walkRightFrames);
+
+
     }
 
     private void drawBob() {
         Bob bob = world.getBob();
-        spriteBatch.draw(bobTex, bob.getPosition().x, bob.getPosition().y, bob.getSIZEX(), bob.getSIZEY());
+        bobFrame = bob.isFacingLeft() ? bobIdleLeft : bobIdleRight;
+
+        if (bob.getState().equals(Bob.State.WALKING)) {
+            bobFrame = bob.isFacingLeft() ? walkLeftAnimation.getKeyFrame(bob.getStateTime(), true) : walkRightAnimation.getKeyFrame(bob.getStateTime(), true);
+        }
+
+        spriteBatch.draw(bobFrame, bob.getPosition().x, bob.getPosition().y, bob.getSIZEX(), bob.getSIZEY());
+
     }
 
     private void drawBlocks() {
         for (Block block : world.getBlocks()) {
-            spriteBatch.draw(blockTex, block.getPosition().x, block.getPosition().y, block.getSIZE(), block.getSIZE());
+            spriteBatch.draw(blockTexture, block.getPosition().x, block.getPosition().y, block.getSIZE(), block.getSIZE());
         }
     }
 
