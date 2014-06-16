@@ -11,9 +11,10 @@ public class Bob {
         IDLE, WALKING, JUMPING, DYING
     }
 
-    public static final float SPEED = 4f;
-    public static final float JUMP_VELOCITY = 1f;
-    public static final float SIZE = 0.5f;
+    public static final float SPEED = 100;
+    public static final float JUMP_VELOCITY = 10;
+    public static final float SIZEX = 24;
+    public static final float SIZEY = 28;
 
     Vector2 position = new Vector2();
     Vector2 acceleration = new Vector2();
@@ -24,8 +25,8 @@ public class Bob {
 
     public Bob(Vector2 position) {
         this.position = position;
-        this.bounds.height = SIZE;
-        this.bounds.width = SIZE;
+        this.bounds.height = SIZEY;
+        this.bounds.width = SIZEX;
     }
 
     public boolean isFacingLeft() {
@@ -36,8 +37,12 @@ public class Bob {
         this.facingLeft = facingLeft;
     }
 
-    public float getSIZE() {
-        return SIZE;
+    public float getSIZEX() {
+        return SIZEX;
+    }
+
+    public float getSIZEY() {
+        return SIZEY;
     }
 
     public Vector2 getPosition() {

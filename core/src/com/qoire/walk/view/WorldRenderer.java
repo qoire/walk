@@ -16,8 +16,8 @@ import com.qoire.walk.model.Bob;
  */
 public class WorldRenderer {
 
-    private static final float CAMERA_WIDTH = 10f;
-    private static final float CAMERA_HEIGHT = 7f;
+    private static final float CAMERA_WIDTH = 16f;
+    private static final float CAMERA_HEIGHT = 9f;
 
     private World world;
     private OrthographicCamera cam;
@@ -38,13 +38,11 @@ public class WorldRenderer {
     public void setSize(int w, int h) {
         this.width = w;
         this.height = h;
-        ppuX = (float)width/CAMERA_WIDTH;
-        ppuY = (float)height/CAMERA_HEIGHT;
     }
 
     public WorldRenderer(World world) {
         this.world = world;
-        this.cam = new OrthographicCamera(CAMERA_WIDTH, CAMERA_HEIGHT);
+        this.cam = new OrthographicCamera(1280, 720);
         this.cam.position.set(CAMERA_WIDTH/2f, CAMERA_HEIGHT/2f, 0);
         this.cam.update();
         spriteBatch = new SpriteBatch();
@@ -52,6 +50,8 @@ public class WorldRenderer {
     }
 
     public void render() {
+        moveCamera();
+        spriteBatch.setProjectionMatrix(cam.combined);
         spriteBatch.begin();
             drawBlocks();
             drawBob();
@@ -62,6 +62,14 @@ public class WorldRenderer {
         }
     }
 
+    private void moveCamera() {
+        Bob bob = world.getBob();
+        if (bob.getPosition().x > CAMERA_WIDTH/2f) {
+            cam.position.set(bob.getPosition().x, CAMERA_HEIGHT + 100, 0);
+            cam.update();
+        }
+    }
+
     private void loadTextures() {
         bobTex = new Texture(Gdx.files.internal("images/bob_01.png"));
         blockTex = new Texture(Gdx.files.internal("images/block.png"));
@@ -69,12 +77,12 @@ public class WorldRenderer {
 
     private void drawBob() {
         Bob bob = world.getBob();
-        spriteBatch.draw(bobTex, bob.getPosition().x * ppuX, bob.getPosition().y * ppuY, bob.getSIZE() * ppuX, bob.getSIZE() * ppuY);
+        spriteBatch.draw(bobTex, bob.getPosition().x, bob.getPosition().y, bob.getSIZEX(), bob.getSIZEY());
     }
 
     private void drawBlocks() {
         for (Block block : world.getBlocks()) {
-            spriteBatch.draw(blockTex, block.getPosition().x * ppuX, block.getPosition().y * ppuY, block.getSIZE() * ppuX, block.getSIZE() * ppuY);
+            spriteBatch.draw(blockTex, block.getPosition().x, block.getPosition().y, block.getSIZE(), block.getSIZE());
         }
     }
 
